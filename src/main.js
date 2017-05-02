@@ -76,7 +76,7 @@ Vue.use(VueProgressBar, options)
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
-  router:routerFunction,
+  router:routerFunction(store),
   store,
   i18n,
   template: '<App/>',

@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper fixed">
     <vue-progress-bar></vue-progress-bar>
-    <Header></Header>
+    <v-Header></v-Header>
     <SideMenu :show="sidebar.opened && !sidebar.hidden"></SideMenu>
     <div class="content-wrapper">
       <section class="content">
@@ -17,7 +17,7 @@
 
   import Vue from 'vue'
   import SideMenu from './SideMenu.vue'
-  import Header from "./Header.vue"
+  import vHeader from "./Header.vue"
   require("jquery-slimscroll/jquery.slimscroll.js")
   import {mapGetters, mapActions,mapMutations} from 'vuex'
   import * as types from "@/store/mutation-types"
@@ -27,7 +27,7 @@
     name: 'app',
     components: {
       SideMenu,
-      Header
+      vHeader
     },
     computed: {
       ...mapGetters({

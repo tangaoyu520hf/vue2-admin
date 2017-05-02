@@ -1,215 +1,158 @@
-<template lang="html">
-  <el-row>
-    <el-col :span="12" :offset="6">
-      <div class="login">
-        <div class="login-form">
-          <div class="card-block">
-            <h1>Vue-Admin-Login</h1>
-            <p class="text-muted">使用用户名登录</p>
-            <div class="input-group m-b-1">
-              <span class="input-group-addon"><i class="fa fa-user"></i></span>
-              <input type="text" class="form-control" placeholder="Username" v-model="form.username">
-            </div>
-            <div class="input-group m-b-2">
-              <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-              <input type="password" class="form-control" placeholder="Password" v-model="form.password"
-                     @keyup.enter="login">
-            </div>
-            <div class="row">
-              <el-row>
-                <el-col :span="12">
-                  <el-button type="primary" class="btn btn-primary p-x-2" @click="login">登录</el-button>
-                </el-col>
-                <el-col :span="12">
-                  <el-button type="button" class="btn btn-link forgot" style="float:right;">忘记密码?</el-button>
-                </el-col>
-              </el-row>
-            </div>
-          </div>
+<template>
+  <div class="login" :style="winSize">
+    <el-row>
+      <el-col :span='24'>
+        <div class="content">
+          <el-form label-position="left" label-width="0px" class="demo-ruleForm card-box loginform"
+                   v-loading="login_actions.disabled"
+                   element-loading-text="正在登录..."
+                   :style="formOffset"
+                   :model='data'
+                   :rules="rule_data"
+                   ref='data'>
+            <h3 class="title">系统登录</h3>
+            <el-form-item
+              prop='username'>
+              <el-input type="text" auto-complete="off" placeholder="账号"
+                        v-model='data.username'
+                        @keyup.native.enter="login('data')"></el-input>
+            </el-form-item>
+            <el-form-item
+              prop='password'>
+              <el-input type="password" auto-complete="off" :placeholder="$i18n.t('hello')"
+                        v-model='data.password'
+                        @keyup.native.enter="login('data')"></el-input>
+            </el-form-item>
+            <!--            <el-checkbox style="margin:0px 0px 35px 0px;"
+                                     :checked='remumber.remumber_flag'
+                                     v-model='remumber.remumber_flag'>记住密码
+                        </el-checkbox>-->
+            <el-form-item style="width:100%;">
+              <el-button type="primary" @click='login("data")'>登录</el-button>
+              <el-button @click='resetForm("data")'>重置</el-button>
+            </el-form-item>
+          </el-form>
         </div>
-        <div class="login-register">
-          <div class="card-block">
-            <h2>注册</h2>
-            <p>平台暂时只支持使用公司邮箱注册.</p>
-            <el-button type="info" class="btn btn-primary active m-t-1"> 马上注册</el-button>
-          </div>
-        </div>
-      </div>
-    </el-col>
-  </el-row>
+      </el-col>
+    </el-row>
+  </div>
 </template>
 
 <script>
-  import * as types from '@/store/mutation-types'
-  import * as api from "@/api"
-  import  auth from '@/auth'
-  import {mapGetters, mapActions, mapMutations} from 'vuex'
-
+  import {mapMutations} from 'vuex';
   export default {
-    name: 'Login',
-    data() {
-      return {
-        form: {
-          username: '',
-          password: ''
+    name: 'login',
+    i18n: { // `i18n` option
+      messages: {
+        ch:{
+          hello:'你好'
         }
       }
     },
-    components: {},
-    methods: {
-      ...mapMutations({
-        setUserInfo: types.SET_USER_INFO
-      }),
-      ...mapActions({
-        loadMenuList: 'loadMenuList' // 映射 this.load() 为 this.$store.dispatch('loadMenuList')
-      }),
-      login(){
-        var redirectUrl = '/index';
-        if (this.$route.query && this.$route.query != null && this.$route.query.redirect && this.$route.query.redirect != null) {
-          redirectUrl = this.$route.query.redirect;
+    data() {
+      return {
+        winSize: {
+          width: '',
+          height: ''
+        },
+
+        formOffset: {
+          position: 'absolute',
+          left: '',
+          top: ''
+        },
+
+        remumber: this.$store.state.user.remumber,
+
+        login_actions: {
+          disabled: false
+        },
+
+        data: {
+          username: '',
+          password: ''
+        },
+
+        rule_data: {
+          username: [{
+            required: true,
+            message: '用户名不能为空！',
+            trigger: 'blur'
+          }],
+          password: [{
+            required: true,
+            message: '密码不能为空！',
+            trigger: 'blur'
+          }],
         }
-        this.$http.get("./static/data/data.json", this.form).then(res => {
-          res.data = res.data.loginInfo;
-          auth.Login(res.data.sid);
-          window.sessionStorage.setItem("user-info", JSON.stringify(res.data.user));
-          this.setUserInfo(res.data.user);
-          this.$http.defaults.headers.common['authSid'] = res.data.sid;
-          this.loadMenuList();
-          this.$router.push({path: redirectUrl});
-        })
+      }
+    },
+    methods: {
+      ...mapMutations([
+        'setToken',
+        'setUserInfo'
+      ]),
+      setSize() {
+        this.winSize.width = $(window).width() + "px";
+        this.winSize.height = $(window).height() + "px";
+
+        this.formOffset.left = (parseInt(this.winSize.width) / 2 - 175) + 'px';
+        this.formOffset.top = (parseInt(this.winSize.height) / 2 - 178) + 'px';
+      },
+
+      login(ref) {
+        this.$refs[ref].validate((valid) => {
+          if (valid) {
+            //失败后回调方法
+            const responseFun = response => {
+              this.login_actions.disabled = false;
+            };
+            this.login_actions.disabled = true;
+            this.$http.post('security/user/login', this[ref]).then(response => {
+              // get body data
+              let token = response.data.data;
+              this.setToken(token)
+              this.$http.get("security/user/info").then(response => {
+                let userInfo = response.data.data.user || {};
+                userInfo.menuList = response.data.data.menuList || [];
+                userInfo.roleFunctions = response.data.data.roleFunctionDTOS || {};
+                this.setUserInfo(userInfo);
+                this.login_actions.disabled = false;
+                //动态添加路由
+                this.$router.addRoutes(this.$store.getters.getRoutes);
+                var redirect = this.$route.params.redirect;
+                if (redirect) {
+                  this.$router.push(redirect);
+                } else {
+                  this.$router.push("/");
+                }
+
+              }).catch(responseFun);
+            }).catch(responseFun);
+          }
+        });
+      },
+
+      resetForm(ref) {
+        this.$refs[ref].resetFields();
+      }
+    },
+    created() {
+      this.setSize();
+      $(window).resize(() => {
+        this.setSize();
+      });
+    },
+    mounted() {
+      //如果上次登录选择的是记住密码并登录成功，则会保存状态，用户名以及token
+      if (this.remumber.remumber_flag === true) {
+        this.data.username = this.remumber.remumber_login_info.username;
+        this.data.password = this.remumber.remumber_login_info.token.substring(0, 16);
       }
     }
   }
 </script>
 
-<style>
-  .login {
-    margin-top: 160px;
-    width: 100%;
-    border: 1px solid #cfd8dc;
-    margin-right: auto !important;
-    margin-left: auto !important;
-    display: table;
-    table-layout: fixed;
-  }
+<style scoped>
 
-  .login .el-button {
-    border-radius: 0;
-  }
-
-  .login .el-button.forgot, .login .el-button.forgot:hover {
-    border: none;
-  }
-
-  .login .login-form {
-    background-color: #FFFFFF;
-    display: inline-block;
-    width: 60%;
-    display: table-cell;
-
-  }
-
-  .login .login-form .card-block {
-    margin: 35px;
-  }
-
-  .login .login-form .card-block p {
-    margin: 15px 0;
-  }
-
-  .input-group {
-    width: 100%;
-    display: table;
-    border-collapse: separate;
-    margin-bottom: 20px !important;
-  }
-
-  .input-group, .input-group-btn, .input-group-btn > .btn, .navbar {
-    position: relative;
-  }
-
-  .input-group-addon:not(:last-child) {
-    border-right: 0;
-  }
-
-  .input-group-addon, .input-group-btn {
-    min-width: 40px;
-    white-space: nowrap;
-    vertical-align: middle;
-    width: 1%;
-  }
-
-  .btn-link:focus, .btn-link:hover {
-    color: #167495;
-    text-decoration: underline;
-    background-color: transparent;
-  }
-
-  .btn-link, .btn-link:active, .btn-link:focus, .btn-link:hover {
-    border-color: transparent;
-  }
-
-  .btn.focus, .btn:focus, .btn:hover {
-    text-decoration: none;
-  }
-
-  .input-group-addon {
-    padding: .5rem .75rem;
-    margin-bottom: 0;
-    font-size: .875rem;
-    font-weight: 400;
-    line-height: 1.75rem;
-    color: #607d8b;
-    text-align: center;
-    background-color: #cfd8dc;
-    border: 1px solid rgba(0, 0, 0, .15);
-  }
-
-  .input-group .form-control, .input-group-addon, .input-group-btn {
-    display: table-cell;
-  }
-
-  .input-group .form-control {
-    position: relative;
-    z-index: 2;
-    float: left;
-    width: 100%;
-    margin-bottom: 0;
-  }
-
-  .form-control {
-    width: 100%;
-    padding: .5rem .75rem;
-    font-size: .875rem;
-    line-height: 1.75rem;
-    color: #607d8b;
-    background-color: #fff;
-    background-image: none;
-    background-clip: padding-box;
-    border: 1px solid rgba(0, 0, 0, .15);
-    transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-  }
-
-  .login .login-form .card-block .row {
-    display: block;
-    margin: 15px 0;
-  }
-
-  .login .login-register {
-    display: table-cell;
-    background-color: #20a8d8;
-    width: 40%;
-    color: #fff;
-  }
-
-  .login .login-register .card-block {
-    text-align: center !important;
-    margin: 30px;
-  }
-
-  .login .login-register .card-block p {
-    text-align: left !important;
-    margin: 15px 0;
-    height: 100px;
-  }
 </style>

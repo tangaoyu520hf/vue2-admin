@@ -2,10 +2,10 @@
   <aside class="main-sidebar animated" :class="{ slideInLeft: show, slideOutLeft: !show }">
     <div class="sidebar">
       <el-menu :default-active="onRoutes"
-               :default-openeds="['/sys/userList','/sys']"
+               :default-openeds="onRouteKeys"
                class="el-menu-vertical-demo"
                theme="dark" router>
-        <template v-for="item in menuList">
+        <template v-for="item in $store.getters.getTopMenus">
           <sub-menu :param="item"></sub-menu>
         </template>
       </el-menu>
@@ -14,8 +14,6 @@
 </template>
 <script>
   import subMenu from "../SubMenu.vue"
-  import {mapGetters, mapActions, mapMutations} from 'vuex'
-
 
   export default {
     props: {
@@ -52,10 +50,6 @@
         }
         return getParentArray(this.$route.path, this.menuList);
       },
-      // 使用对象展开运算符将 getters 混入 computed 对象中
-      ...mapGetters([
-        'menuList'
-      ])
     },
     mounted () {
       let route = this.$route
@@ -65,12 +59,7 @@
 //      }
     },
     created: function () {
-      this.load();
-    },
-    methods: {
-      ...mapActions({
-        load: 'loadMenuList' // 映射 this.load() 为 this.$store.dispatch('loadMenuList')
-      })
+
     }
   }
 </script>
