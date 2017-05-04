@@ -62,11 +62,17 @@ function getRoutes(menus) {
   menus.forEach((currentValue,index) => {
     let route = {
       path: currentValue.menuCode,
-      component: util.load(currentValue.menuUrl),
       meta:{
         applicationCode:currentValue.applicationCode
       }
     };
+    if(currentValue.pid==''){
+      route.component = util.load("components/common/layout/Home");
+    }else if(currentValue.pid!=''&&currentValue.children.length>0&&currentValue.menuUrl===''){
+      route.component = util.load("components/common/Context");
+    }else{
+      route.component = util.load(currentValue.menuUrl);
+    }
     if(currentValue.children.length>0){
       route.children = [{
         path: '',

@@ -1,5 +1,5 @@
 <template>
-  <el-submenu :index="item.menuCode" v-if="item.children && item.children.length>0">
+  <el-submenu :index="'/'+item.applicationCode+item.fullPath" v-if="item.children && item.children.length>0">
     <template slot="title"><i :class="item.icon"></i>{{item.menuName}}</template>
     <template v-for="child in item.children">
       <sub-menu v-if="child.children && child.children.length>0" :param="child"></sub-menu>

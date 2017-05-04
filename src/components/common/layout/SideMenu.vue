@@ -30,25 +30,16 @@
         return this.$route.path;
       },
       onRouteKeys(){
-        const getParentArray = (path, ms, kas = []) => {
-          if (ms && ms.length > 0) {
-            for (let k = 0, length = ms.length; k < length; k++) {
-              if (path == ms[k].href) {
-                kas.push(ms[k].href);
-                break;
-              }
-              let i = kas.length;
-              if (ms[k].children && ms[k].children.length > 0) {
-                getParentArray(path, ms[k].children, kas);
-              }
-              if (i < kas.length) {
-                kas.push(ms[k].href);
-              }
-            }
+        const getPath = (path,kas = []) => {
+          if(path.lastIndexOf('/')>1){
+            let pathTemp = path.substring(0,path.lastIndexOf('/'));
+            kas.push(pathTemp)
+            getPath(pathTemp,kas);
           }
-          return kas.reverse();
+          return kas;
         }
-        return getParentArray(this.$route.path, this.menuList);
+        let paths = getPath(this.$route.path);
+        return paths;
       },
     },
     mounted () {
