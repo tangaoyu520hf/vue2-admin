@@ -54,10 +54,23 @@
                 <el-slider v-model="form.sort"></el-slider>
               </el-form-item>
 
-              <el-form-item label="菜单操作" prop="type">
-                <el-checkbox-group v-model="form.functionId">
-                  <!--<el-checkbox v-for="item in functionList" :label="item" name="type"></el-checkbox>-->
-                </el-checkbox-group>
+              <el-form-item label="菜单操作" prop="functionId">
+                  <el-select
+                    v-model="form.functionId"
+                    multiple
+                    filterable
+                    remote
+                    placeholder="请输入关键词"
+                    :remote-method="remoteMethod"
+                    :loading="loading">
+                    <el-option
+                      v-if="functionList.length>0"
+                      v-for="item in functionList"
+                      :key="item.functionId"
+                      :label="item.functionName"
+                      :value="item.functionId">
+                    </el-option>
+                  </el-select>
               </el-form-item>
 
               <el-form-item label="" :label-width="formLabelWidth">
@@ -81,6 +94,7 @@
           <el-button type="primary" @click="selectIconDialog = false">确 定</el-button>
           </span>
           </el-dialog>
+
         </el-card>
       </el-col>
     </el-row>
@@ -92,7 +106,6 @@
   import panel from "@/components/common/components/Panel.vue";
   import selectTree from "@/components/common/components/SelectTree.vue";
   import treeter from "@/components/common/components/treeter";
-  import merge from 'element-ui/src/utils/merge';
 
   import * as api from "@/api/security";
   import util from "@/core/util";
@@ -110,8 +123,10 @@
     },
     data(){
       return {
+        loading: false,
+        //应用集合
         applicationList: [],
-        functionList:[],
+        functionList:[{functionId:"DWADWA",functionName:"的神话"}],
         menuTreeOfApplication:[],
         selectIconDialog:false,
         formLabelWidth: '100px',
@@ -132,7 +147,7 @@
           menuPid: null,
           remark: '',
           menuCode: '',
-          functionId:[]
+          functionId:["DWADWA"],
         },
         rules: {
           menuName: [
@@ -167,7 +182,7 @@
         return (
           <span>
             <span>
-              <span><i class={data.icon}></i>{node.label}</span>
+              <span><i class={data.menuIcon}></i>{node.label}</span>
             </span>
           </span>
         );
@@ -188,17 +203,12 @@
           })
       },
       batchDelete(){
-        let checkKeys = this.$refs.menuTree.getCheckedKeys();
-        if (checkKeys == null || checkKeys.length <= 0) {
-          this.$message.warning('请选择要删除的资源');
-          return;
-        }
         this.$confirm('确定删除?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$http.get(api.SYS_MENU_DELETE + "?menuIds=" + this.selectNodeKeys.join(','))
+          this.$http.post(api.SYS_MENU_DELETE, this.selectNodeKeys)
             .then(res => {
               this.$message('操作成功');
               this.load();
@@ -206,11 +216,15 @@
         });
       },
       handleNodeClick(data){
-        this.form = util.cover(data,this.form);
+        this.resetForm("ruleForm");
+        util.cover(data,this.form);
+
+        this.functionList = data.functionList;
+        this.form.functionId = this.functionList.map(obj => obj.functionId);
+        //最上级目录是0，但是如果是0则会没有默认提示语，所以转化成空
         if(this.form.pid=='0'){
-          form.pid = '';
+          this.form.pid = '';
         }
-        this.$refs[ref].resetFields();
       },
       handleNodeCheckChange(data){
         this.selectNodeKeys = this.$refs.menuTree.getCheckedKeys();
@@ -252,6 +266,13 @@
           .then(res => {
             this.menuTree = res.data.data;
           })
+      },
+      /**
+       * 远程获取数据
+       * @param query
+       */
+      remoteMethod(query){
+        this.functionList = []
       }
     },
     created(){
@@ -260,7 +281,7 @@
         this.menuTreeOfApplication = this.menuTree.filter(obj =>
           obj.applicationId===newVal
         );
-        this.form.pid = '';
+        this.form.menuPid = '';
       })
       this.getApplicationList();
       this.load();

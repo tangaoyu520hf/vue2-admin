@@ -1,24 +1,29 @@
 <template>
-  <div class="list">
-    <!--删除及查询条件 start-->
-    <el-col :span="20" class='actions-top'>
-      <el-button type='danger' icon='delete'
-                 :disabled='batchFlag'
-                 @click='onDelete(true)'>删除选中
-      </el-button>
+  <imp-panel>
+    <h3 class="box-title" slot="header" style="width: 100%;">
+      <el-row style="width: 100%;">
+        <el-col :span="12">
+          <el-button type='danger' icon='delete'
+                     :disabled='batchFlag'
+                     @click='onDelete(true)'>删除选中
+          </el-button>
+        </el-col>
+        <el-col :span="12">
+          <el-form  :inline="true" :model='search_data' class="demo-form-inline">
+            <el-form-item>
+              <el-input placeholder="标题" icon="search" v-model='search_data.title'></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" icon="search" @click='onSearch'>查询</el-button>
+              <el-button type="primary" icon="plus" @click='dialogFormVisible=true'>新增</el-button>
+            </el-form-item>
+          </el-form>
+        </el-col>
 
-      <el-form :inline="true" :model='search_data' class="demo-form-inline">
-        <el-form-item>
-          <el-input placeholder="标题" v-model='search_data.title'></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" icon="search" @click='onSearch'>查询</el-button>
-          <el-button type="primary" icon="plus" @click='dialogFormVisible=!dialogFormVisible'>新增</el-button>
-        </el-form-item>
-      </el-form>
-    </el-col>
-    <!--删除及查询条件 end-->
-    <el-col :span="24" class='actions-top'>
+      </el-row>
+    </h3>
+
+    <div slot="body">
       <el-table border style="width: 100%" align='center'
                 :data='data'
                 @selection-change='handleSelectionChange'>
@@ -27,29 +32,29 @@
           width="55">
         </el-table-column>
         <el-table-column
-          label="菜单名称"
-          width="180"
-          prop="menuName">
+          label="应用名称"
+          prop="applicationName">
         </el-table-column>
         <el-table-column
-          label="菜单编码"
-          width="180"
-          prop="menuCode">
+          label="应用编码"
+          prop="applicationCode">
         </el-table-column>
         <el-table-column
-          label="菜单图标"
-          width="180"
-          prop="menuIcon">
+          label="应用地址"
+          prop="applicationUrl">
         </el-table-column>
         <el-table-column
-          label="菜单地址"
-          width="180"
-          prop="menuUrl">
+          label="应用图标"
+          prop="applicationIcon">
         </el-table-column>
         <el-table-column
-          label="排序"
-          width="80"
-          prop="sort">
+          label="创建人"
+          prop="createName">
+        </el-table-column>
+        <el-table-column
+          label="创建时间"
+          width="180"
+          prop="createTime">
         </el-table-column>
 
         <el-table-column
@@ -70,7 +75,7 @@
               type="danger"
               icon='delete'
               size="mini"
-              @click='onDelete(scope.row,scope.$index,data)'></el-button>
+              @click='onDelete(scope.row.applicationId)'></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -84,62 +89,39 @@
         :layout="paginations.layout"
         :total="paginations.total">
       </el-pagination>
+
       <!--分页结束-->
-    </el-col>
+      <el-dialog title="应用" :visible.sync="dialogFormVisible">
+        <el-form :model="ruleForm">
+          <el-form-item label="活动名称" :label-width="formLabelWidth">
+            <el-input v-model="ruleForm.applicationName" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="活动区域" :label-width="formLabelWidth">
+            <el-select v-model="ruleForm.applicationId" placeholder="请选择活动区域">
+              <el-option label="区域一" value="shanghai"></el-option>
+              <el-option label="区域二" value="beijing"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+        </div>
+      </el-dialog>
+    </div>
+  </imp-panel>
 
-    <el-dialog :close-on-click-modal=false size="large" title="菜单编辑" v-model="dialogFormVisible">
-      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="应用名称" prop="name">
-          <el-select v-model="ruleForm.applicationId" placeholder="请选择">
-            <el-option
-              v-for="item in applicationList"
-              :key="item.applicationId"
-              :label="item.applicationName"
-              :value="item.applicationId">
-            </el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="上级菜单" prop="name">
-          <el-input
-            placeholder="请输入内容"
-            v-model="ruleForm.pid"
-            :readonly="true"
-            @click.native="onDelete">
-          </el-input>
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
-          <el-button @click="resetForm('ruleForm')">重置</el-button>
-        </el-form-item>
-      </el-form>
-<!--      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
-      </div>-->
-    </el-dialog>
-
-    <!--    <el-col :span="24" class='btm-action'>
-
-        </el-col>-->
-    <!--    <el-dialog size="small"
-                   :title="dialog.article_info.title"
-                   v-model="dialog.show"
-                   @close='onCloseView'>
-          <div v-html="dialog.article_info.content"></div>
-          &lt;!&ndash;  <span slot="footer" class="dialog-footer">
-              <el-button @click="dialog.show = false">取 消</el-button>
-              <el-button type="primary" @click="dialog.show = false">确 定</el-button>
-          </span> &ndash;&gt;
-        </el-dialog>-->
-  </div>
 
 </template>
 
 <script>
+  import panel from "@/components/common/components/Panel.vue";
+  import * as api from "@/api/security";
   export default {
     name: 'menu',
+    components: {
+      'imp-panel': panel,
+    },
     created:function () {
       this.getDataList();
       this.getApplicationList();
@@ -152,6 +134,7 @@
     data () {
       return {
         applicationList :[],
+        formLabelWidth: '100px',
         ruleForm: {
           applicationId: '',
           pid: '',
@@ -205,8 +188,24 @@
       }
     },
     methods: {
-      onDelete(){
-        alert(123);
+      onDelete(id){
+        let ids = [];
+        if(id){
+          ids.push(id);
+        }else {
+          ids = this.selectNodeKeys;
+        }
+        this.$confirm('确定删除?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.$http.post(api.SYS_APPLICATION_DELETE, ["dwa"])
+            .then(res => {
+              this.$message('操作成功');
+              this.load();
+            })
+        });
       },
       onEdit(){
 
@@ -241,7 +240,7 @@
           ...this.search_data
         };
 
-        this.$http.get("security/menu/page",{params:data}).then(response=> {
+        this.$http.get(api.SYS_APPLICATION_PAGE,{params:data}).then(response=> {
           this.data = response.data.data.records;
           this.paginations.total = response.data.data.total;
         });

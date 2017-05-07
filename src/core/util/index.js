@@ -18,15 +18,13 @@ export default {
    * @param source
    */
   cover(target,source){
-    let targetTemp = {};
     for (let prop in source) {
       if (source.hasOwnProperty(prop)) {
         let value = target[prop];
         if (value !== undefined) {
-          targetTemp[prop] = value;
+          source[prop] = value;
         }
       }
     }
-    return targetTemp;
   }
 }
