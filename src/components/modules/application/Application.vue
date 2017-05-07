@@ -228,9 +228,14 @@
 
       },
       onSave(){
+        let saveOrUpdateUrl =  api.SYS_APPLICATION_ADD;
+        //不为空则是更新
+        if(this.ruleForm.applicationId){
+          saveOrUpdateUrl = api.SYS_APPLICATION_UPDATE
+        }
         this.$refs['ruleForm'].validate((valid) => {
             if (valid){
-              this.$http.post(api.SYS_APPLICATION_ADD, this.ruleForm)
+              this.$http.post(saveOrUpdateUrl, this.ruleForm)
                 .then(res => {
                   this.$message('操作成功');
                   this.getDataList();
