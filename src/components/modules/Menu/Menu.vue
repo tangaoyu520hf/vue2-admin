@@ -126,7 +126,7 @@
         loading: false,
         //应用集合
         applicationList: [],
-        functionList:[{functionId:"DWADWA",functionName:"的神话"}],
+        functionList:[],
         menuTreeOfApplication:[],
         selectIconDialog:false,
         formLabelWidth: '100px',
@@ -147,7 +147,7 @@
           menuPid: null,
           remark: '',
           menuCode: '',
-          functionId:["DWADWA"],
+          functionId:[],
         },
         rules: {
           menuName: [
@@ -254,7 +254,7 @@
        */
       getApplicationList(){
         //完成查询
-        this.$http.get("security/application/list").then(response=> {
+        this.$http.get(api.SYS_APPLICATION_LIST).then(response=> {
           this.applicationList = response.data.data;
         });
       },

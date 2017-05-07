@@ -15,7 +15,7 @@
             </el-form-item>
             <el-form-item>
               <el-button type="primary" icon="search" @click='onSearch'>查询</el-button>
-              <el-button type="primary" icon="plus" @click='dialogFormVisible=true'>新增</el-button>
+              <el-button type="primary" icon="plus" @click='onAdd'>新增</el-button>
             </el-form-item>
           </el-form>
         </el-col>
@@ -92,20 +92,38 @@
 
       <!--分页结束-->
       <el-dialog title="应用" :visible.sync="dialogFormVisible">
-        <el-form :model="ruleForm">
-          <el-form-item label="活动名称" :label-width="formLabelWidth">
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
+          <el-form-item prop="applicationName" label="应用名称" :label-width="formLabelWidth">
             <el-input v-model="ruleForm.applicationName" auto-complete="off"></el-input>
           </el-form-item>
-          <el-form-item label="活动区域" :label-width="formLabelWidth">
-            <el-select v-model="ruleForm.applicationId" placeholder="请选择活动区域">
-              <el-option label="区域一" value="shanghai"></el-option>
-              <el-option label="区域二" value="beijing"></el-option>
-            </el-select>
+          <el-form-item prop="applicationUrl" label="应用地址" :label-width="formLabelWidth">
+            <el-input v-model="ruleForm.applicationUrl" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item prop="applicationCode" label="应用编码" :label-width="formLabelWidth">
+            <el-input v-model="ruleForm.applicationCode" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item prop="applicationIcon" label="应用图标" :label-width="formLabelWidth">
+            <el-input v-model="ruleForm.applicationIcon" auto-complete="off"></el-input>
+          </el-form-item>
+
+          <el-form-item prop="isEnable" label="是否有效" :label-width="formLabelWidth">
+            <el-switch
+              v-model="ruleForm.isEnable"
+              on-text="有效"
+              off-text="无效"
+              on-color="#13ce66"
+              off-color="#ff4949"
+              on-value="Y"
+              off-value="N">
+            </el-switch>
+          </el-form-item>
+          <el-form-item label="应用描述" prop="applicationDesc" :label-width="formLabelWidth" >
+            <el-input type="textarea" v-model="ruleForm.applicationDesc"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+          <el-button type="primary" @click="onSave">确 定</el-button>
         </div>
       </el-dialog>
     </div>
@@ -117,6 +135,7 @@
 <script>
   import panel from "@/components/common/components/Panel.vue";
   import * as api from "@/api/security";
+  import util from "@/core/util";
   export default {
     name: 'menu',
     components: {
@@ -124,7 +143,6 @@
     },
     created:function () {
       this.getDataList();
-      this.getApplicationList();
     },
     computed: {
       batchFlag(){
@@ -137,36 +155,25 @@
         formLabelWidth: '100px',
         ruleForm: {
           applicationId: '',
-          pid: '',
-          date1: '',
-          date2: '',
-          delivery: false,
-          type: [],
-          resource: '',
-          desc: ''
+          applicationName: '',
+          applicationUrl: '',
+          applicationDesc: '',
+          applicationIcon: '',
+          isEnable: 'Y',
+          applicationCode: '',
         },
         rules: {
-          name: [
-            { required: true, message: '请输入活动名称', trigger: 'blur' },
-            { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          applicationName: [
+            { required: true, message: '请输入应用名称', trigger: 'blur' },
+            {min: 2, max: 15, message: '长度在 2 到 15 个字符', trigger: 'blur'}
           ],
-          region: [
-            { required: true, message: '请选择活动区域', trigger: 'change' }
+          applicationUrl: [
+            { required: true, message: '请输入应用地址', trigger: 'blur' },
+            {min: 2, max: 15, message: '长度在 2 到 15 个字符', trigger: 'blur'}
           ],
-          date1: [
-            { type: 'date', required: true, message: '请选择日期', trigger: 'change' }
-          ],
-          date2: [
-            { type: 'date', required: true, message: '请选择时间', trigger: 'change' }
-          ],
-          type: [
-            { type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }
-          ],
-          resource: [
-            { required: true, message: '请选择活动资源', trigger: 'change' }
-          ],
-          desc: [
-            { required: true, message: '请填写活动形式', trigger: 'blur' }
+          applicationCode: [
+            { required: true, message: '请输入应用编码', trigger: 'blur' },
+            {min: 2, max: 15, message: '长度在 2 到 15 个字符', trigger: 'blur'}
           ]
         },
 
@@ -200,17 +207,37 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$http.post(api.SYS_APPLICATION_DELETE, ["dwa"])
+          this.$http.post(api.SYS_APPLICATION_DELETE,ids)
             .then(res => {
               this.$message('操作成功');
-              this.load();
+              this.getDataList();
             })
         });
       },
-      onEdit(){
-
+      onAdd(){
+        this.dialogFormVisible=true;
+        if(this.$refs["ruleForm"]){
+          this.$refs["ruleForm"].resetFields();
+        }
+      },
+      onEdit(row){
+        util.cover(row,this.ruleForm);
+        this.dialogFormVisible = true;
       },
       onSelect(){
+
+      },
+      onSave(){
+        this.$refs['ruleForm'].validate((valid) => {
+            if (valid){
+              this.$http.post(api.SYS_APPLICATION_ADD, this.ruleForm)
+                .then(res => {
+                  this.$message('操作成功');
+                  this.getDataList();
+                  this.dialogFormVisible = false
+                })
+            }
+        });
 
       },
       /**
@@ -245,15 +272,6 @@
           this.paginations.total = response.data.data.total;
         });
       },
-      /**
-       * 获取应用下拉值
-       */
-      getApplicationList(){
-        //完成查询
-        this.$http.get("security/application/list").then(response=> {
-          this.applicationList = response.data.data;
-        });
-      }
 
     }
   }

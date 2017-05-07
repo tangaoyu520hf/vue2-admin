@@ -14,3 +14,6 @@ export const SYS_MENU_LIST2 = CONTEXT + '/sys/menu/list2';
 /*应用管理*/
 export const SYS_APPLICATION_PAGE = CONTEXT + '/application/page';
 export const SYS_APPLICATION_DELETE = CONTEXT + '/application/delete';
+export const SYS_APPLICATION_ADD = CONTEXT + '/application/add';
+export const SYS_APPLICATION_LIST = CONTEXT + '/application/list';
+export const SYS_APPLICATION_UPDATE = CONTEXT + '/application/update';
