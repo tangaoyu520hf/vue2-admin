@@ -70,7 +70,7 @@
   import {addResizeListener, removeResizeListener} from 'element-ui/src/utils/resize-event';
   import {t} from 'element-ui/src/locale';
   import merge from 'element-ui/src/utils/merge';
-  import treeter from "../components/treeter"
+  import treeter from "./treeter"
 
   const sizeMap = {
     'large': 42,

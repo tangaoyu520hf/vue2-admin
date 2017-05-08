@@ -133,7 +133,7 @@
 </template>
 
 <script>
-  import panel from "@/components/common/components/Panel.vue";
+  import panel from "@/components/common/Panel.vue";
   import * as api from "@/api/security";
   import util from "@/core/util";
   export default {

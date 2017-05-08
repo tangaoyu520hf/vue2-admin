@@ -103,9 +103,9 @@
 </template>
 <script  type="text/babel">
 
-  import panel from "@/components/common/components/Panel.vue";
-  import selectTree from "@/components/common/components/SelectTree.vue";
-  import treeter from "@/components/common/components/treeter";
+  import panel from "@/components/common/Panel.vue";
+  import selectTree from "@/components/common/SelectTree.vue";
+  import treeter from "@/components/common/treeter";
 
   import * as api from "@/api/security";
   import util from "@/core/util";

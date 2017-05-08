@@ -19,7 +19,7 @@
             </el-form-item>
             <el-form-item
               prop='password'>
-              <el-input type="password" auto-complete="off" :placeholder="$i18n.t('hello')"
+              <el-input type="password" auto-complete="off" placeholder="密码"
                         v-model='data.password'
                         @keyup.native.enter="login('data')"></el-input>
             </el-form-item>
@@ -42,13 +42,6 @@
   import {mapMutations} from 'vuex';
   export default {
     name: 'login',
-    i18n: { // `i18n` option
-      messages: {
-        ch:{
-          hello:'你好'
-        }
-      }
-    },
     data() {
       return {
         winSize: {

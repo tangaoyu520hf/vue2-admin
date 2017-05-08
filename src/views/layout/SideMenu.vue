@@ -13,7 +13,7 @@
   </aside>
 </template>
 <script>
-  import subMenu from "../SubMenu.vue"
+  import subMenu from "@/components/common/SubMenu.vue"
 
   export default {
     props: {

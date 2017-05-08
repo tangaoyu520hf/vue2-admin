@@ -16,7 +16,7 @@
          @click.stop.prevent="toggleSidebar(!sidebar.opened)">
         <span class="sr-only">Toggle navigation</span>
       </a>
-      <!-- Navbar Right Menu -->
+      <!-- Navbar RimenuMenu -->
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
           <!-- Messages: style can be found in dropdown.less-->
@@ -49,7 +49,7 @@
             <ul class="dropdown-menu" v-if="showProfileBox">
               <!-- User image -->
               <li class="user-header">
-                <img src="../../../../static/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                <!--<img src="../../../../static/img/user2-160x160.jpg" class="img-circle" alt="User Image">-->
                 <p>
                   {{userInfo.name}} - Web Developer
                 </p>
@@ -85,9 +85,9 @@
 </template>
 <script>
   import {mapGetters, mapActions, mapMutations} from 'vuex'
-  import * as types from "@/store/mutation-types"
-  import * as api from "@/api"
-  import  auth from '@/auth'
+  import * as types from "@/store/mutation-types";
+  import * as api from "@/api";
+  import auth from '@/auth';
   export default {
     data(){
       return {
@@ -220,7 +220,7 @@
 
   .main-header .logo .logo-lg {
     display: block;
-    background-image: url("../../../../static/img/foot_icon.png");
+    background-image: url("../../../static/img/foot_icon.png");
     background-repeat: no-repeat;
     background-position: 15px -6px;
     height: 38px;

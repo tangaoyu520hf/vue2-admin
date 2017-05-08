@@ -9,7 +9,6 @@ export default {
    * @returns {function(): *}
    */
   load(component){
-    console.info(`../${component}.vue`);
     return () => System.import(`@/${component}.vue`)
   },
   /**

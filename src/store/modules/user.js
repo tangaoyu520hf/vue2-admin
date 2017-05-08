@@ -67,7 +67,7 @@ function getRoutes(menus) {
       }
     };
     if(currentValue.pid==''){
-      route.component = util.load("components/common/layout/Home");
+      route.component = util.load("views/layout/Home");
     }else if(currentValue.pid!=''&&currentValue.children.length>0&&currentValue.menuUrl===''){
       route.component = util.load("components/common/Context");
     }else{

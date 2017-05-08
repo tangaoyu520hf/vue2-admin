@@ -8,12 +8,12 @@ export default store => {
     {
       path: '/login',
       name: "login",
-      component: util.load("components/common/Login"),
+      component: util.load("views/login/Login"),
       meta: {notRequire: true}
     },
     {
       path: '/',
-      component: util.load("components/common/layout/Home"),
+      component: util.load("views/layout/Home"),
       children: [{
         hidden: true,
         path: '',
@@ -23,17 +23,9 @@ export default store => {
       }, {
         path: '/welcome',
         name: "welcome",
-        component: util.load("components/common/Welcome"),
+        component:  util.load("components/common/Welcome"),
         meta: {
           applicationCode: "welcome",
-        }
-      }, {
-        path: '/menu',
-        name: "menu",
-        component: util.load("components/modules/Menu/Menu"),
-        meta: {
-          applicationCode: "menu",
-          notRequire: true
         }
       }]
     }, ...store.getters.getRoutes]
@@ -42,7 +34,7 @@ export default store => {
     routes: routes
   });
 
-/*  router.beforeEach((to, from, next) => {
+  router.beforeEach((to, from, next) => {
     let token = store.state.user.userinfo.token;
     //如果直接是公开的 则直接就 next
     if(to.matched.some(record => record.meta.notRequire)){
@@ -65,6 +57,6 @@ export default store => {
         }
       }
     }
-  })*/
+  })
   return router;
 }
