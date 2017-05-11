@@ -6,7 +6,29 @@
     <div class="content-wrapper">
       <section class="content">
         <transition mode="out-in" enter-active-class="fadeIn" leave-active-class="fadeOut" appear>
-          <router-view></router-view>
+          <div>
+          <el-tabs ref="tabs" type="border-card" :active-name="$route.path" closable @tab-remove="removeTab" @tab-click="handleClick">
+            <el-tab-pane :labelContent="menuItems(item)" v-for="(item, index) in $store.state.menu.cardMenuList" :name="item.menuUrl" :label="item.menuName" :key="item.menuName">
+              <keep-alive>
+                <template v-if="$route.path==item.menuUrl" >
+                  <router-view></router-view>
+                </template>
+              </keep-alive>
+            </el-tab-pane>
+<!--            <el-tab-pane label="用户管理">用户管理</el-tab-pane>
+            <el-tab-pane label="配置管理">配置管理</el-tab-pane>
+            <el-tab-pane label="角色管理">角色管理</el-tab-pane>
+            <el-tab-pane label="定时任务补偿">定时任务补偿</el-tab-pane>
+            <el-tab-pane label="用户管理">用户管理</el-tab-pane>
+            <el-tab-pane label="配置管理">配置管理</el-tab-pane>
+            <el-tab-pane label="角色管理">角色管理</el-tab-pane>
+            <el-tab-pane label="定时任务补偿">定时任务补偿</el-tab-pane>
+            <el-tab-pane label="用户管理">用户管理</el-tab-pane>
+            <el-tab-pane label="配置管理">配置管理</el-tab-pane>
+            <el-tab-pane label="角色管理">角色管理</el-tab-pane>
+            <el-tab-pane label="定时任务补偿">定时任务补偿</el-tab-pane>-->
+          </el-tabs>
+          </div>
         </transition>
       </section>
     </div>
@@ -44,8 +66,22 @@
     methods: {
       ...mapMutations({
         toggleDevice: types.TOGGLE_DEVICE,
-        toggleSidebar: types.TOGGLE_SIDEBAR
+        toggleSidebar: types.TOGGLE_SIDEBAR,
+        removeCardMenu: "removeCardMenu"
       }),
+      handleClick(tab, event) {
+        let menuItem = tab.labelContent.apply(this);
+        this.$router.push(menuItem.menuUrl);
+      },
+      menuItems(item){
+        return ()=> {return item};
+      },
+      removeTab(targetName) {
+        this.removeCardMenu(targetName);
+        let menuList = this.$store.state.menu.cardMenuList
+        let menuItem = menuList[menuList.length-1];
+        this.$router.push(menuItem.menuUrl);
+      }
     },
     watch: {
       '$route': function (to, from) {

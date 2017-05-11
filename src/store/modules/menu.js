@@ -3,10 +3,19 @@
  */
 
 const menuModule = {
-  state:{ headerIndex:'1' },
+  state:{ cardMenuList:[] },
   mutations:{
-    setHeadIndex(state,applicationCode){
-      state.headerIndex = applicationCode
+    addCardMenu(state,cardMenu){
+      let isExist = state.cardMenuList.filter(obj => obj.menuName==cardMenu.menuName);
+      if(isExist.length<1){
+        state.cardMenuList.push(cardMenu);
+      }
+    },
+    removeCardMenu(state,menuUrl){
+      let tempList = state.cardMenuList.filter(obj=> {
+        return obj.menuUrl!==menuUrl
+      });
+      state.cardMenuList = tempList;
     }
   }
 }

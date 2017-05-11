@@ -4,7 +4,7 @@
       <el-menu :default-active="onRoutes"
                :default-openeds="onRouteKeys"
                class="el-menu-vertical-demo"
-               theme="dark" router>
+               theme="dark">
         <template v-for="item in $store.getters.getTopMenus">
           <sub-menu :param="item"></sub-menu>
         </template>
@@ -14,7 +14,6 @@
 </template>
 <script>
   import subMenu from "@/components/common/SubMenu.vue"
-
   export default {
     props: {
       show: Boolean
@@ -51,7 +50,8 @@
     },
     created: function () {
 
-    }
+    },
+
   }
 </script>
 <style>

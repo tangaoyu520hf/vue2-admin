@@ -63,7 +63,8 @@ function getRoutes(menus) {
     let route = {
       path: currentValue.menuCode,
       meta:{
-        applicationCode:currentValue.applicationCode
+        applicationCode:currentValue.applicationCode,
+        name: currentValue.menuName
       }
     };
     if(currentValue.pid==''){

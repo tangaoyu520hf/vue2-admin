@@ -7,7 +7,7 @@ export default store => {
   let routes = [
     {
       path: '/login',
-      name: "login",
+      name: "",
       component: util.load("views/login/Login"),
       meta: {notRequire: true}
     },
@@ -26,6 +26,7 @@ export default store => {
         component:  util.load("components/common/Welcome"),
         meta: {
           applicationCode: "welcome",
+          name: "欢迎页",
         }
       }]
     }, ...store.getters.getRoutes]
@@ -35,6 +36,13 @@ export default store => {
   });
 
   router.beforeEach((to, from, next) => {
+    if(to.meta.name){
+      let menuItem = {
+        menuName:to.meta.name,
+        menuUrl: to.path
+      }
+      store.commit("addCardMenu",menuItem);
+    }
     let token = store.state.user.userinfo.token;
     //如果直接是公开的 则直接就 next
     if(to.matched.some(record => record.meta.notRequire)){

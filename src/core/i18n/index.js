@@ -6,14 +6,25 @@ import VueI18n from 'vue-i18n'
 import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
 
 const messages = {
-  en: {
-    message: {
-      hello: 'hello world'
-    }
-  },
   ch: {
-    message: {
-      hello: '你好'
+    button:{
+      query:"查询",
+      add:"添加",
+      update:"修改",
+      delete:"删除选中",
+      close:"关闭",
+      save:"保存",
+      cancel:"取消",
+      confirm:"确认"
+    },
+    common: {
+      confirmDelete: "确认删除?",
+      prompt: "提示",
+      operate: "操作",
+      operateSuccess: "操作成功",
+      confirm: "确认",
+      cancel: "取消"
+
     }
   }
 }
