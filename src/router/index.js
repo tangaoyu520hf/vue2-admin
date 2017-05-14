@@ -26,16 +26,41 @@ export default store => {
         component:  util.load("components/common/Welcome"),
         meta: {
           applicationCode: "welcome",
-          name: "欢迎页",
         }
-      }]
-    }, ...store.getters.getRoutes]
+      }, {
+        path: '/table',
+        component: util.load("components/common/Context"),
+        meta: {
+          applicationCode: "application",
+        },
+        children: [{
+          path: '',
+          component: util.load("components/modules/table/table"),
+        },{
+          path: '/table/addOrUpdate',
+          component: util.load("components/modules/table/addOrUpdate"),
+        }]
+      }, {
+          path: '/genScheme',
+          component: util.load("components/common/Context"),
+          meta: {
+            applicationCode: "application",
+          },
+          children: [{
+            path: '',
+            component: util.load("components/modules/genScheme/genScheme"),
+          },{
+            path: '/table/addOrUpdate',
+            component: util.load("components/modules/table/addOrUpdate"),
+          }]
+        },]
+    },...store.getters.getRoutes]
   const router = new Router({
     mode: 'history',
     routes: routes
   });
 
-  router.beforeEach((to, from, next) => {
+/*  router.beforeEach((to, from, next) => {
     if(to.meta.name){
       let menuItem = {
         menuName:to.meta.name,
@@ -65,6 +90,6 @@ export default store => {
         }
       }
     }
-  })
+  })*/
   return router;
 }
