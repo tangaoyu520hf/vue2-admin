@@ -43,13 +43,13 @@
         </el-form-item>
       </el-form>
 
-
       <el-table border style="width: 100%" align='center'
                 :data='table.columnList'>
-        <el-table-column label="列名" prop="name" ></el-table-column>
+        <el-table-column width="150" fixed label="列名" prop="name" ></el-table-column>
         <el-table-column
           label="说明"
           prop="comments"
+          width="120"
           >
           <template scope="scope">
             <el-input v-model="scope.row.comments"></el-input>
@@ -57,63 +57,77 @@
         </el-table-column>
         <el-table-column
           label="物理类型"
+          width="150"
           prop="jdbcType">
         </el-table-column>
-        <el-table-column label="Java类型" prop="javaType">
+        <el-table-column width="150" label="Java类型" prop="javaType">
           <template scope="scope">
             <el-select v-model="scope.row.javaType">
               <el-option
                 v-for="item in options.javaType"
-                :key="item"
-                :label="item"
-                :value="item">
+                :key="item.value"
+                :label="item.lable"
+                :value="item.value">
               </el-option>
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="Java属性名称" prop="javaField">
+        <el-table-column width="150" label="Java属性名称" prop="javaField">
           <template scope="scope">
             <el-input v-model="scope.row.name"></el-input>
           </template>
         </el-table-column>
 
-        <el-table-column width="45px" label="主键" prop="javaField" >
+        <el-table-column label="主键" prop="javaField" >
           <template scope="scope">
               <el-checkbox v-model="scope.row.isPk" true-label="1" false-label="0"></el-checkbox>
           </template>
         </el-table-column>
 
-        <el-table-column width="45px" label="可空" prop="javaField" >
+        <el-table-column label="可空" prop="javaField" >
           <template scope="scope">
             <el-checkbox v-model="scope.row.isNull" true-label="1" false-label="0"></el-checkbox>
           </template>
         </el-table-column>
 
-        <el-table-column width="45px" label="插入" prop="javaField" >
+        <el-table-column label="插入" prop="javaField" >
           <template scope="scope">
             <el-checkbox v-model="scope.row.isInsert" true-label="1" false-label="0"></el-checkbox>
           </template>
         </el-table-column>
 
-        <el-table-column width="45px" label="编辑" prop="javaField" >
+        <el-table-column label="编辑" prop="javaField" >
           <template scope="scope">
             <el-checkbox v-model="scope.row.isEdit" true-label="1" false-label="0"></el-checkbox>
           </template>
         </el-table-column>
 
-        <el-table-column width="45px" label="列表" prop="javaField" >
+        <el-table-column label="列表" prop="javaField" >
           <template scope="scope">
             <el-checkbox v-model="scope.row.isList" true-label="1" false-label="0"></el-checkbox>
           </template>
         </el-table-column>
 
-        <el-table-column width="45px" label="查询" prop="javaField" >
+        <el-table-column label="查询" prop="javaField" >
           <template scope="scope">
             <el-checkbox v-model="scope.row.isQuery" true-label="1" false-label="0"></el-checkbox>
           </template>
         </el-table-column>
 
-        <el-table-column label="查询匹配方式" prop="queryType">
+        <el-table-column label="显示表单类型" width="150" prop="queryType">
+          <template scope="scope">
+            <el-select v-model="scope.row.showType">
+              <el-option
+                v-for="item in options.showType"
+                :key="item.value"
+                :label="item.lable"
+                :value="item.value">
+              </el-option>
+            </el-select>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="查询匹配方式" width="150" prop="queryType">
           <template scope="scope">
             <el-select v-model="scope.row.queryType">
               <el-option
@@ -126,7 +140,7 @@
           </template>
         </el-table-column>
 
-        <el-table-column label="字典类型" prop="dictType">
+        <el-table-column label="字典类型" width="150" prop="dictType">
           <template scope="scope">
             <el-input v-model="scope.row.dictType"></el-input>
           </template>
@@ -162,6 +176,7 @@
         this.isNext = true;
         this.table.name = this.$route.query.name
         this.table.id = this.$route.query.id
+        this.getTypes();
         this.getTableColunms();
       }
     },
@@ -178,27 +193,9 @@
         },
         isNext:false,
         options:{
-          javaType:["String","Long","Integer","Double","java.util.Date"],
-          queryType:[
-            {value:"=",lable:"="},
-            {value:"!=",lable:"!="},
-            {value:">",lable:">"},
-            {value:">=",lable:">="},
-            {value:"<",lable:"<"},
-            {value:"<=",lable:"<="},
-            {value:"Between",lable:"Between"},
-            {value:"Like",lable:"Like"},
-            {value:"Left Like",lable:"Left Like"},
-            {value:"Right Like",lable:"Right Like"},
-          ],
-          showType:[
-            {value:"input",lable:"文本框"},
-            {value:"textarea",lable:"文本域"},
-            {value:"select",lable:"下拉框"},
-            {value:"checkbox",lable:"复选框"},
-            {value:"radiobox",lable:"单选框"},
-            {value:"dateselect",lable:"日期选择"},
-          ],
+          javaType:[],
+          queryType:[],
+          showType:[],
         }
       }
     },
@@ -231,8 +228,14 @@
         this.$http.get("/table/getTablesColumnByDB",{params:{name:this.table.name,id: this.table.id}}).then(response=> {
           this.table = response.data;
         });
-      }
-
+      },
+      getTypes(){
+        this.$http.get("/table/getTypes").then(response=> {
+          this.options.showType = response.data.showTypes;
+          this.options.javaType = response.data.javaTypes;
+          this.options.queryType = response.data.queryTypes;
+        });
+      },
     }
   }
 </script>

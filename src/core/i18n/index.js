@@ -24,7 +24,6 @@ const messages = {
       operateSuccess: "操作成功",
       confirm: "确认",
       cancel: "取消"
-
     }
   }
 }

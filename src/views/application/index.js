@@ -107,9 +107,6 @@ export default {
       });*/
     },
     onEdit(row){
-      /*let doms = $(this.$el).find("#testClass");*/
-      let doms = $(this.$el).find("#testClass");
-      doms.html("神话");
       util.cover(row,this.ruleForm);
       this.dialogFormVisible = true;
     },
