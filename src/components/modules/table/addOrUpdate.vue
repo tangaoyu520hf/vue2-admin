@@ -74,7 +74,7 @@
         </el-table-column>
         <el-table-column width="150" label="Java属性名称" prop="javaField">
           <template scope="scope">
-            <el-input v-model="scope.row.name"></el-input>
+            <el-input v-model="scope.row.javaField"></el-input>
           </template>
         </el-table-column>
 
