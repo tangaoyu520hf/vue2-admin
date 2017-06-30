@@ -116,6 +116,11 @@
               </el-option>
             </el-select>
           </el-form-item>
+
+          <el-form-item label="是否覆盖现有同名文件">
+            <el-switch on-text="" off-text="" v-model="viewData.genScheme.replaceFile"></el-switch>
+          </el-form-item>
+
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -134,8 +139,10 @@
   import panel from "@/components/common/Panel.vue";
   import * as api from "@/api/security";
   import util from "@/core/util";
+  import ElCheckbox from "../../../../node_modules/element-ui/packages/checkbox/src/checkbox";
   export default {
     components: {
+      ElCheckbox,
       'imp-panel': panel,
     },
     created:function () {
@@ -161,6 +168,7 @@
             functionNameSimple:'',
             functionName:'',
             functionAuthor:'',
+            replaceFile:false
           },
           config:{
             categoryList:[]
@@ -217,7 +225,7 @@
       },
       onSave(isGen){
         if(isGen){
-          this.viewData.genScheme.gen = isGen;
+          this.viewData.genScheme.genIs = isGen;
         }
         this.$refs['ruleForm'].validate((valid) => {
             if (valid){

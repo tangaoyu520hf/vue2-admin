@@ -20,7 +20,7 @@ import VueProgressBar from "vue-progressbar";
 Vue.config.productionTip = false
 
 //网络请求
-axios.defaults.baseURL = 'http://localhost:8080';
+axios.defaults.baseURL = 'http://localhost:10001';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 Vue.use(VueAxios, axios)
 

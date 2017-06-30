@@ -66,7 +66,7 @@
               <el-option
                 v-for="item in options.javaType"
                 :key="item.value"
-                :label="item.lable"
+                :label="item.label"
                 :value="item.value">
               </el-option>
             </el-select>
@@ -120,7 +120,7 @@
               <el-option
                 v-for="item in options.showType"
                 :key="item.value"
-                :label="item.lable"
+                :label="item.label"
                 :value="item.value">
               </el-option>
             </el-select>
@@ -133,7 +133,7 @@
               <el-option
                 v-for="item in options.queryType"
                 :key="item.value"
-                :label="item.lable"
+                :label="item.label"
                 :value="item.value">
               </el-option>
             </el-select>
@@ -203,6 +203,7 @@
       next(){
           if(this.table.name){
             this.isNext=true
+            this.getTypes();
             this.getTableColunms();
           }else{
             this.$message.error('请选择table再进行下一步');
