@@ -34,6 +34,30 @@ Vue.use(ElementUI, {
 Vue.use(plugins)
 
 
+import VeeValidate from 'vee-validate'
+
+const config = {
+  locale: 'zh_CN',
+  errorBagName: 'errorrs',
+  fieldsBagName: 'veeFieldss',
+  delay: 0,
+  locale: 'en',
+  dictionary: null,
+  strict: true,
+  enableAutoClasses: false,
+  classNames: {
+    touched: 'touchedd', // the control has been blurred
+    untouched: 'untouchedd', // the control hasn't been blurred
+    valid: 'validd', // model is valid
+    invalid: 'invalidd', // model is invalid
+    pristine: 'pristinedd', // control has not been interacted with
+    dirty: 'dirtyd' // control has been interacted with
+  },
+  events: 'input|blur',
+  inject: true
+};
+Vue.use(VeeValidate, config);
+
 // 添加一个请求拦截器
 axios.interceptors.request.use(function (config) {
   // Do something before request is sent

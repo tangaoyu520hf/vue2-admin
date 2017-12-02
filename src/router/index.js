@@ -6,6 +6,11 @@ Vue.use(Router)
 export default store => {
   let routes = [
     {
+      path: '/hello',
+      component: util.load("components/Hello"),
+      meta: {notRequire: true}
+    },
+    {
       path: '/login',
       name: "",
       component: util.load("views/login/Login"),
@@ -54,9 +59,14 @@ export default store => {
             component: util.load("components/modules/table/addOrUpdate"),
           }]
         },]
-    },...store.getters.getRoutes]
+    },...store.getters.getRoutes,
+    {
+      path: '*',
+      component: util.load("views/login/Login"),
+      meta: {notRequire: true}
+    },
+  ]
   const router = new Router({
-    mode: 'history',
     routes: routes
   });
 
