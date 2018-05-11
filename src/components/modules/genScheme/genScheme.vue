@@ -225,7 +225,7 @@
       },
       onSave(isGen){
         if(isGen){
-          this.viewData.genScheme.genIs = isGen;
+          this.viewData.genScheme.genIs = 'true';
         }
         this.$refs['ruleForm'].validate((valid) => {
             if (valid){

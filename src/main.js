@@ -20,7 +20,7 @@ import VueProgressBar from "vue-progressbar";
 Vue.config.productionTip = false
 
 //网络请求
-axios.defaults.baseURL = 'http://localhost:10001';
+axios.defaults.baseURL = 'http://localhost:10010';
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 Vue.use(VueAxios, axios)
 
@@ -29,9 +29,6 @@ Vue.use(ElementUI)
 Vue.use(ElementUI, {
   i18n: key => i18n.vm._t(key)
 })
-
-//加载自定义的 插件
-Vue.use(plugins)
 
 
 import VeeValidate from 'vee-validate'
@@ -54,9 +51,13 @@ const config = {
     dirty: 'dirtyd' // control has been interacted with
   },
   events: 'input|blur',
-  inject: true
+  inject: false
 };
 Vue.use(VeeValidate, config);
+
+//加载自定义的 插件
+Vue.use(plugins)
+
 
 // 添加一个请求拦截器
 axios.interceptors.request.use(function (config) {
